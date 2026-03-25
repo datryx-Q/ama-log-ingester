@@ -205,3 +205,19 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# --- AMA Log Ingester Specifics ---
+# Ignore any log files tested locally
+*.log
+*.syslog
+*.txt
+
+# Ignore your specific staging and target directories
+# folder names used in the script
+staging_area/
+temp_ingest/
+test_data/
+
+# OS-specific metadata
+.DS_Store
+Thumbs.db
