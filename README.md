@@ -12,10 +12,10 @@ This utility provides a "Log Relay" workflow. It allows logs from offline system
 
 ## How It Works
 
-1. **Manual Transfer:** Logs are moved from offline devices to a "Staging" folder on a Bridge device (Linux/Windows) where the AMA is installed.
-2. **Detection & Processing:** This script monitors the Staging folder for new files.
-3. **AMA Ingestion Trigger:** Because the AMA typically ignores static or "cold" files, this script reads and re-writes the log data into a stream that the AMA is actively monitoring via a **Data Collection Rule (DCR)**.
-4. **Cloud Ingestion:** The AMA detects the activity and pushes the logs to Sentinel.
+1. **Manual Transfer:** Logs are moved from offline devices to a "Staging" folder on a Bridge device (Windows) where the AMA is installed.
+2. **Detection & Processing:** This script monitors the Staging folder for new files, including automatic extraction of `.zip` archives.
+3. **AMA Ingestion Trigger:** Because the AMA typically ignores static or "cold" files, this script reads and re-writes the log data using .NET stream classes into a directory the AMA is actively monitoring via a **Data Collection Rule (DCR)**.
+4. **Cloud Ingestion:** The AMA detects the new file activity and pushes the logs to Sentinel.
 
 ---
 
@@ -23,43 +23,54 @@ This utility provides a "Log Relay" workflow. It allows logs from offline system
 
 ### Prerequisites
 
-* **Bridge Device:** An internet-connected machine with the [Azure Monitor Agent installed](https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-overview).
-* **Data Collection Rule (DCR):** A configured DCR in Azure pointing to the specific local file path used by this script.
-* **Permissions:** Sufficient local privileges to read/write in the staging and target log directories.
+* **Bridge Device:** A Windows machine with the [Azure Monitor Agent installed](https://learn.microsoft.com/en-us/azure/azure-monitor/agents/azure-monitor-agent-overview).
+* **Data Collection Rule (DCR):** A configured DCR in Azure pointing to `C:\ProgramData\ama-log-ingestor\Ingest\*.txt` (or preferred extensions).
+* **Permissions:** Administrator privileges are recommended to write to `CommonApplicationData`.
 
 ### Installation
 
 1. Clone the repository:
-   ```bash
+   ```powershell
    git clone [https://github.com/your-username/ama-log-ingester.git](https://github.com/your-username/ama-log-ingester.git)
    cd ama-log-ingester
    ```
-2. (Optional) Create a virtual environment and install dependencies:
-   ```bash
-   python3 -m venv venv
-    source venv/bin/activate
-    # No external dependencies required for the base script 
-    ```
+
 ### Usage
 
-Run the script by pointing it to your staging directory and your AMA-monitored target file:
-```bash
-python3 ingest_logs.py --source /path/to/offline/logs --target /var/log/ama-ingest.log
+Run the script manually or via a Scheduled Task. You can optionally provide a tag to help identify specific batches of logs.
+```powershell
+# Standard run
+.\Invoke-AMALogIngest.ps1
+
+# Run with a specific tag for easier Sentinel filtering
+.\Invoke-AMALogIngest.ps1 -FileTag "Incident01"
 ```
 
-### Configuration
-Parameter,Description
---source,The directory where you manually upload offline logs.
---target,The file path that your Azure DCR is configured to watch.
---interval,(Optional) How often to check for new files (default: 60s).
+### Configuration & Paths
+
+By default, the script utilizes the following paths on the Bridge device:
+
+   * Staging: C:\ProgramData\ama-log-ingestor\Log Staging
+
+   * Ingest (AMA Target): C:\ProgramData\ama-log-ingestor\Ingest
+
+   * Logs: C:\ProgramData\ama-log-ingestor\Script Logs
+
+### Known Limitations
+
+   * Hostname Attribution: Because the logs are re-written on the Bridge device, Microsoft Sentinel will associate the ingestion with the Bridge device's hostname. It is recommended to include the original source hostname within the log content itself or use the -FileTag parameter to identify the source.
+
+   * Log Overwrite / Data Persistence: To ensure a clean ingestion environment, the script clears all files in the Ingest folder prior to processing a new batch. Ensure the AMA has had sufficient time to upload previous batches before starting a new run.
+
+   * Log Rotation: The internal script log (ama-log-ingestor-log-file.txt) is automatically cleared if it exceeds 10MB to prevent storage exhaustion.
 
 ### Security & Privacy
 
-  * No Credentials Stored: This script does not require Azure Service Principals or Keys; it relies on the local AMA's Managed Identity for authentication.
+   * No Credentials Stored: This script does not require Azure Service Principals or Keys; it relies on the local AMA's Managed Identity for authentication.
 
-  * Sanitization: Ensure offline logs do not contain sensitive plaintext passwords before moving them to the bridge device.
+   * Sanitization: Ensure offline logs do not contain sensitive plaintext passwords before moving them to the bridge device.
 
-  * Air-Gap Integrity: This script only moves data out of the staging area; it does not create a reverse path back to the offline systems.
+   * Air-Gap Integrity: This script only moves data out of the staging area; it does not create a reverse path back to the offline systems.
 
 ### License
 
