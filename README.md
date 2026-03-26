@@ -31,7 +31,7 @@ This utility provides a "Log Relay" workflow. It allows logs from offline system
 
 1. Clone the repository:
    ```powershell
-   git clone [https://github.com/your-username/ama-log-ingester.git](https://github.com/your-username/ama-log-ingester.git)
+   git clone [https://github.com/datryx-Q/ama-log-ingester.git](https://github.com/datryx-Q/ama-log-ingester.git)
    cd ama-log-ingester
    ```
 
