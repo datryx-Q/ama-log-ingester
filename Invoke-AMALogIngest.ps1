@@ -21,7 +21,7 @@ param (
 
 # --- Configuration ---
 $AppName     = "ama-log-ingestor"
-$BaseDir     = Join-Path ([Environment]::GetFolderPath("CommonApplicationData")) $AppName
+$BaseDir     = Join-Path ([Environment]::GetFolderPath("CommonApplicationData")) $AppName # C:\ProgramData\ama-log-ingestor
 $IncomingDir = Join-Path $BaseDir "Log Staging" # Logs go here
 $UploadDir   = Join-Path $BaseDir "Ingest" # AMA ingest directory
 $LogDir      = Join-Path $BaseDir "Script Logs"
