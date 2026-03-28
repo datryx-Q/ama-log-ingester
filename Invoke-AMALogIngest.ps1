@@ -12,7 +12,7 @@
     Optional string to append to the processed filename (e.g., "SiteA").
 	
 	EXAMPLE USE:
-    .\Invoke-AMALogIngest.ps1 -FileTag "Incident01"
+   powershell.exe -ExecutionPolicy Bypass -File ".\log-ingestor-v1.ps1" -FileTag "Tag-01"
 #>
 
 param (
