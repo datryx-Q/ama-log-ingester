@@ -25,7 +25,7 @@ $BaseDir     = Join-Path ([Environment]::GetFolderPath("CommonApplicationData"))
 $IncomingDir = Join-Path $BaseDir "Log Staging" # Logs go here
 $UploadDir   = Join-Path $BaseDir "Ingest" # AMA ingest directory
 $LogDir      = Join-Path $BaseDir "Script Logs"
-$LogFile     = Join-Path $LogDir "ama-log-ingestor-log-file.txt"
+$LogFile     = Join-Path $LogDir "ama-log-ingestor.log"
 $MaxLogSize  = 10MB 
 
 # --- Initialization ---
