@@ -48,7 +48,7 @@ Upon execution, the script automatically manages the following hierarchy within 
 
 ---
 
-## 🛠 Installation & Setup
+## Installation & Setup
 
 ### 1. File Placement
 Place the following files into a dedicated directory on your bridge device:
