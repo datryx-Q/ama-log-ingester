@@ -214,9 +214,9 @@ __marimo__/
 
 # Ignore your specific staging and target directories
 # folder names used in the script
-staging_area/
-temp_ingest/
-test_data/
+Script Logs/
+Ingest/
+Log Staging/
 
 # OS-specific metadata
 .DS_Store
