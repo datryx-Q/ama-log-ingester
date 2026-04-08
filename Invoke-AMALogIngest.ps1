@@ -51,7 +51,7 @@ if (Test-Path $LogFile) {
 }
 
 # --- Pre-Run Cleanup ---
-# SAFER: only remove older files (avoid deleting files AMA hasn’t ingested yet)
+# Avoids deleting files AMA hasn’t ingested
 Get-ChildItem $UploadDir -File -ErrorAction SilentlyContinue | Where-Object {
     $_.LastWriteTime -lt (Get-Date).AddMinutes(-10)
 } | ForEach-Object {
@@ -103,7 +103,7 @@ Get-ChildItem -Path $IncomingDir -Filter "*.gz" | ForEach-Object {
 }
 
 # --- Main Processing ---
-Get-ChildItem -Path $IncomingDir -File | ForEach-Object {
+Get-ChildItem -Path $IncomingDir -File -Recurse | ForEach-Object {
     $src       = $_.FullName
     $origName  = $_.Name
     $start     = Get-Date
